@@ -1,0 +1,1248 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+external-controller: 127.0.0.1:9090
+profile:
+  store-selected: true
+  store-fake-ip: true
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+  - localhost
+  - '*.localhost'
+  - '*.localdomain'
+  - '*.lan'
+  - '*.local'
+  - '*.home.arpa'
+  - '*.in-addr.arpa'
+  - '*.ip6.arpa'
+  - '*.arpa'
+  default-nameserver:
+  - 223.5.5.5
+  nameserver:
+  - system
+  - 223.5.5.5
+  nameserver-policy:
+    geosite:private:
+    - system
+    +.localhost:
+    - system
+    +.localdomain:
+    - system
+    +.lan:
+    - system
+    +.local:
+    - system
+    +.home.arpa:
+    - system
+    +.in-addr.arpa:
+    - system
+    +.ip6.arpa:
+    - system
+    +.arpa:
+    - system
+    geosite:cn:
+    - system
+    - 223.5.5.5
+    rule-set:China-Site:
+    - system
+    - 223.5.5.5
+    geosite:geolocation-!cn:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+  proxy-server-nameserver:
+  - 223.5.5.5
+  follow-rule: true
+proxy-groups:
+- name: 国外代理
+  type: select
+  proxies:
+  - 自动选择
+  - 手动选择
+  - 故障转移
+  - 负载均衡
+  - 🇭🇰 香港
+  - 🇹🇼 台湾
+  - 🇯🇵 日本
+  - 🇸🇬 新加坡
+  - 🇺🇸 美国
+  - 🇰🇷 韩国
+  - 🇬🇧 英国
+  - 🇨🇦 加拿大
+  - 🇦🇺 澳大利亚
+  - 🇩🇪 德国
+  - 🇫🇷 法国
+  - 🇳🇱 荷兰
+  - 🇮🇹 意大利
+  - 🇪🇸 西班牙
+  - 🇨🇭 瑞士
+  - 🇮🇳 印度
+  - 🇹🇭 泰国
+  - 🇲🇾 马来西亚
+  - 🇵🇭 菲律宾
+  - 🇻🇳 越南
+  - 🇮🇩 印尼
+  - 🇹🇷 土耳其
+  - 🇷🇺 俄罗斯
+  - 🇧🇷 巴西
+  - 🇲🇽 墨西哥
+  - 🇦🇷 阿根廷
+  - 🇿🇦 南非
+  - 🇦🇪 阿联酋
+  - DIRECT
+- name: 手动选择
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 自动选择
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 故障转移
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 负载均衡
+  type: load-balance
+  include-all: true
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇭🇰 香港
+  type: select
+  proxies:
+  - 🇭🇰 香港 自动测速
+  - 🇭🇰 香港 手动选择
+  - 🇭🇰 香港 故障转移
+  - 🇭🇰 香港 负载均衡
+  - DIRECT
+- name: 🇭🇰 香港 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇭🇰|香港|港|Hong[ -]?Kong|HKG|(^|[^A-Za-z])HK([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇭🇰 香港 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇭🇰|香港|港|Hong[ -]?Kong|HKG|(^|[^A-Za-z])HK([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇭🇰 香港 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇭🇰|香港|港|Hong[ -]?Kong|HKG|(^|[^A-Za-z])HK([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇭🇰 香港 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇭🇰|香港|港|Hong[ -]?Kong|HKG|(^|[^A-Za-z])HK([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇹🇼 台湾
+  type: select
+  proxies:
+  - 🇹🇼 台湾 自动测速
+  - 🇹🇼 台湾 手动选择
+  - 🇹🇼 台湾 故障转移
+  - 🇹🇼 台湾 负载均衡
+  - DIRECT
+- name: 🇹🇼 台湾 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇹🇼|台湾|台灣|臺灣|台北|Taiwan|Taipei|TPE|(^|[^A-Za-z])TW([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇹🇼 台湾 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇹🇼|台湾|台灣|臺灣|台北|Taiwan|Taipei|TPE|(^|[^A-Za-z])TW([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇼 台湾 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇹🇼|台湾|台灣|臺灣|台北|Taiwan|Taipei|TPE|(^|[^A-Za-z])TW([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇼 台湾 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇹🇼|台湾|台灣|臺灣|台北|Taiwan|Taipei|TPE|(^|[^A-Za-z])TW([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇯🇵 日本
+  type: select
+  proxies:
+  - 🇯🇵 日本 自动测速
+  - 🇯🇵 日本 手动选择
+  - 🇯🇵 日本 故障转移
+  - 🇯🇵 日本 负载均衡
+  - DIRECT
+- name: 🇯🇵 日本 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇯🇵|日本|东京|東京|大阪|Japan|Tokyo|Osaka|(^|[^A-Za-z])JP([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇯🇵 日本 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇯🇵|日本|东京|東京|大阪|Japan|Tokyo|Osaka|(^|[^A-Za-z])JP([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇯🇵 日本 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇯🇵|日本|东京|東京|大阪|Japan|Tokyo|Osaka|(^|[^A-Za-z])JP([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇯🇵 日本 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇯🇵|日本|东京|東京|大阪|Japan|Tokyo|Osaka|(^|[^A-Za-z])JP([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇸🇬 新加坡
+  type: select
+  proxies:
+  - 🇸🇬 新加坡 自动测速
+  - 🇸🇬 新加坡 手动选择
+  - 🇸🇬 新加坡 故障转移
+  - 🇸🇬 新加坡 负载均衡
+  - DIRECT
+- name: 🇸🇬 新加坡 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])SG([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇸🇬 新加坡 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])SG([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇸🇬 新加坡 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])SG([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇸🇬 新加坡 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])SG([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇺🇸 美国
+  type: select
+  proxies:
+  - 🇺🇸 美国 自动测速
+  - 🇺🇸 美国 手动选择
+  - 🇺🇸 美国 故障转移
+  - 🇺🇸 美国 负载均衡
+  - DIRECT
+- name: 🇺🇸 美国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇺🇸|美国|美國|洛杉矶|洛杉磯|纽约|紐約|西雅图|西雅圖|芝加哥|硅谷|矽谷|United[ -]?States|America|Los[ -]?Angeles|New[ -]?York|Seattle|Chicago|Silicon[ -]?Valley|(^|[^A-Za-z])US(A)?([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇺🇸 美国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇺🇸|美国|美國|洛杉矶|洛杉磯|纽约|紐約|西雅图|西雅圖|芝加哥|硅谷|矽谷|United[ -]?States|America|Los[ -]?Angeles|New[ -]?York|Seattle|Chicago|Silicon[ -]?Valley|(^|[^A-Za-z])US(A)?([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇺🇸 美国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇺🇸|美国|美國|洛杉矶|洛杉磯|纽约|紐約|西雅图|西雅圖|芝加哥|硅谷|矽谷|United[ -]?States|America|Los[ -]?Angeles|New[ -]?York|Seattle|Chicago|Silicon[ -]?Valley|(^|[^A-Za-z])US(A)?([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇺🇸 美国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇺🇸|美国|美國|洛杉矶|洛杉磯|纽约|紐約|西雅图|西雅圖|芝加哥|硅谷|矽谷|United[ -]?States|America|Los[ -]?Angeles|New[ -]?York|Seattle|Chicago|Silicon[ -]?Valley|(^|[^A-Za-z])US(A)?([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇰🇷 韩国
+  type: select
+  proxies:
+  - 🇰🇷 韩国 自动测速
+  - 🇰🇷 韩国 手动选择
+  - 🇰🇷 韩国 故障转移
+  - 🇰🇷 韩国 负载均衡
+  - DIRECT
+- name: 🇰🇷 韩国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇰🇷|韩国|韓國|首尔|首爾|Korea|South[ -]?Korea|Seoul|(^|[^A-Za-z])KR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇰🇷 韩国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇰🇷|韩国|韓國|首尔|首爾|Korea|South[ -]?Korea|Seoul|(^|[^A-Za-z])KR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇰🇷 韩国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇰🇷|韩国|韓國|首尔|首爾|Korea|South[ -]?Korea|Seoul|(^|[^A-Za-z])KR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇰🇷 韩国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇰🇷|韩国|韓國|首尔|首爾|Korea|South[ -]?Korea|Seoul|(^|[^A-Za-z])KR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇬🇧 英国
+  type: select
+  proxies:
+  - 🇬🇧 英国 自动测速
+  - 🇬🇧 英国 手动选择
+  - 🇬🇧 英国 故障转移
+  - 🇬🇧 英国 负载均衡
+  - DIRECT
+- name: 🇬🇧 英国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇬🇧|英国|英國|伦敦|倫敦|United[ -]?Kingdom|Britain|England|London|(^|[^A-Za-z])(UK|GB)([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇬🇧 英国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇬🇧|英国|英國|伦敦|倫敦|United[ -]?Kingdom|Britain|England|London|(^|[^A-Za-z])(UK|GB)([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇬🇧 英国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇬🇧|英国|英國|伦敦|倫敦|United[ -]?Kingdom|Britain|England|London|(^|[^A-Za-z])(UK|GB)([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇬🇧 英国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇬🇧|英国|英國|伦敦|倫敦|United[ -]?Kingdom|Britain|England|London|(^|[^A-Za-z])(UK|GB)([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇨🇦 加拿大
+  type: select
+  proxies:
+  - 🇨🇦 加拿大 自动测速
+  - 🇨🇦 加拿大 手动选择
+  - 🇨🇦 加拿大 故障转移
+  - 🇨🇦 加拿大 负载均衡
+  - DIRECT
+- name: 🇨🇦 加拿大 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇨🇦|加拿大|多伦多|多倫多|温哥华|溫哥華|Canada|Toronto|Vancouver|(^|[^A-Za-z])CA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇨🇦 加拿大 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇨🇦|加拿大|多伦多|多倫多|温哥华|溫哥華|Canada|Toronto|Vancouver|(^|[^A-Za-z])CA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇨🇦 加拿大 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇨🇦|加拿大|多伦多|多倫多|温哥华|溫哥華|Canada|Toronto|Vancouver|(^|[^A-Za-z])CA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇨🇦 加拿大 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇨🇦|加拿大|多伦多|多倫多|温哥华|溫哥華|Canada|Toronto|Vancouver|(^|[^A-Za-z])CA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇦🇺 澳大利亚
+  type: select
+  proxies:
+  - 🇦🇺 澳大利亚 自动测速
+  - 🇦🇺 澳大利亚 手动选择
+  - 🇦🇺 澳大利亚 故障转移
+  - 🇦🇺 澳大利亚 负载均衡
+  - DIRECT
+- name: 🇦🇺 澳大利亚 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇦🇺|澳大利亚|澳洲|悉尼|墨尔本|墨爾本|Australia|Sydney|Melbourne|(^|[^A-Za-z])AU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇦🇺 澳大利亚 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇦🇺|澳大利亚|澳洲|悉尼|墨尔本|墨爾本|Australia|Sydney|Melbourne|(^|[^A-Za-z])AU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇺 澳大利亚 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇦🇺|澳大利亚|澳洲|悉尼|墨尔本|墨爾本|Australia|Sydney|Melbourne|(^|[^A-Za-z])AU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇺 澳大利亚 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇦🇺|澳大利亚|澳洲|悉尼|墨尔本|墨爾本|Australia|Sydney|Melbourne|(^|[^A-Za-z])AU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇩🇪 德国
+  type: select
+  proxies:
+  - 🇩🇪 德国 自动测速
+  - 🇩🇪 德国 手动选择
+  - 🇩🇪 德国 故障转移
+  - 🇩🇪 德国 负载均衡
+  - DIRECT
+- name: 🇩🇪 德国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇩🇪|德国|德國|法兰克福|法蘭克福|Germany|Deutschland|Frankfurt|(^|[^A-Za-z])DE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇩🇪 德国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇩🇪|德国|德國|法兰克福|法蘭克福|Germany|Deutschland|Frankfurt|(^|[^A-Za-z])DE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇩🇪 德国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇩🇪|德国|德國|法兰克福|法蘭克福|Germany|Deutschland|Frankfurt|(^|[^A-Za-z])DE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇩🇪 德国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇩🇪|德国|德國|法兰克福|法蘭克福|Germany|Deutschland|Frankfurt|(^|[^A-Za-z])DE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇫🇷 法国
+  type: select
+  proxies:
+  - 🇫🇷 法国 自动测速
+  - 🇫🇷 法国 手动选择
+  - 🇫🇷 法国 故障转移
+  - 🇫🇷 法国 负载均衡
+  - DIRECT
+- name: 🇫🇷 法国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇫🇷|法国|法國|巴黎|France|Paris|(^|[^A-Za-z])FR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇫🇷 法国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇫🇷|法国|法國|巴黎|France|Paris|(^|[^A-Za-z])FR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇫🇷 法国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇫🇷|法国|法國|巴黎|France|Paris|(^|[^A-Za-z])FR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇫🇷 法国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇫🇷|法国|法國|巴黎|France|Paris|(^|[^A-Za-z])FR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇳🇱 荷兰
+  type: select
+  proxies:
+  - 🇳🇱 荷兰 自动测速
+  - 🇳🇱 荷兰 手动选择
+  - 🇳🇱 荷兰 故障转移
+  - 🇳🇱 荷兰 负载均衡
+  - DIRECT
+- name: 🇳🇱 荷兰 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇳🇱|荷兰|荷蘭|阿姆斯特丹|Netherlands|Holland|Amsterdam|(^|[^A-Za-z])NL([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇳🇱 荷兰 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇳🇱|荷兰|荷蘭|阿姆斯特丹|Netherlands|Holland|Amsterdam|(^|[^A-Za-z])NL([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇳🇱 荷兰 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇳🇱|荷兰|荷蘭|阿姆斯特丹|Netherlands|Holland|Amsterdam|(^|[^A-Za-z])NL([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇳🇱 荷兰 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇳🇱|荷兰|荷蘭|阿姆斯特丹|Netherlands|Holland|Amsterdam|(^|[^A-Za-z])NL([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇮🇹 意大利
+  type: select
+  proxies:
+  - 🇮🇹 意大利 自动测速
+  - 🇮🇹 意大利 手动选择
+  - 🇮🇹 意大利 故障转移
+  - 🇮🇹 意大利 负载均衡
+  - DIRECT
+- name: 🇮🇹 意大利 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇮🇹|意大利|Italy|Italia|Milan|Rome|米兰|米蘭|罗马|羅馬|(^|[^A-Za-z])IT([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇮🇹 意大利 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇮🇹|意大利|Italy|Italia|Milan|Rome|米兰|米蘭|罗马|羅馬|(^|[^A-Za-z])IT([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇹 意大利 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇮🇹|意大利|Italy|Italia|Milan|Rome|米兰|米蘭|罗马|羅馬|(^|[^A-Za-z])IT([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇹 意大利 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇮🇹|意大利|Italy|Italia|Milan|Rome|米兰|米蘭|罗马|羅馬|(^|[^A-Za-z])IT([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇪🇸 西班牙
+  type: select
+  proxies:
+  - 🇪🇸 西班牙 自动测速
+  - 🇪🇸 西班牙 手动选择
+  - 🇪🇸 西班牙 故障转移
+  - 🇪🇸 西班牙 负载均衡
+  - DIRECT
+- name: 🇪🇸 西班牙 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇪🇸|西班牙|Spain|Madrid|马德里|馬德里|(^|[^A-Za-z])ES([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇪🇸 西班牙 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇪🇸|西班牙|Spain|Madrid|马德里|馬德里|(^|[^A-Za-z])ES([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇪🇸 西班牙 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇪🇸|西班牙|Spain|Madrid|马德里|馬德里|(^|[^A-Za-z])ES([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇪🇸 西班牙 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇪🇸|西班牙|Spain|Madrid|马德里|馬德里|(^|[^A-Za-z])ES([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇨🇭 瑞士
+  type: select
+  proxies:
+  - 🇨🇭 瑞士 自动测速
+  - 🇨🇭 瑞士 手动选择
+  - 🇨🇭 瑞士 故障转移
+  - 🇨🇭 瑞士 负载均衡
+  - DIRECT
+- name: 🇨🇭 瑞士 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇨🇭|瑞士|Switzerland|Swiss|Zurich|苏黎世|蘇黎世|(^|[^A-Za-z])CH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇨🇭 瑞士 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇨🇭|瑞士|Switzerland|Swiss|Zurich|苏黎世|蘇黎世|(^|[^A-Za-z])CH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇨🇭 瑞士 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇨🇭|瑞士|Switzerland|Swiss|Zurich|苏黎世|蘇黎世|(^|[^A-Za-z])CH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇨🇭 瑞士 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇨🇭|瑞士|Switzerland|Swiss|Zurich|苏黎世|蘇黎世|(^|[^A-Za-z])CH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇮🇳 印度
+  type: select
+  proxies:
+  - 🇮🇳 印度 自动测速
+  - 🇮🇳 印度 手动选择
+  - 🇮🇳 印度 故障转移
+  - 🇮🇳 印度 负载均衡
+  - DIRECT
+- name: 🇮🇳 印度 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇮🇳|印度|India|Mumbai|Delhi|孟买|孟買|德里|(^|[^A-Za-z])IN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇮🇳 印度 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇮🇳|印度|India|Mumbai|Delhi|孟买|孟買|德里|(^|[^A-Za-z])IN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇳 印度 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇮🇳|印度|India|Mumbai|Delhi|孟买|孟買|德里|(^|[^A-Za-z])IN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇳 印度 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇮🇳|印度|India|Mumbai|Delhi|孟买|孟買|德里|(^|[^A-Za-z])IN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇹🇭 泰国
+  type: select
+  proxies:
+  - 🇹🇭 泰国 自动测速
+  - 🇹🇭 泰国 手动选择
+  - 🇹🇭 泰国 故障转移
+  - 🇹🇭 泰国 负载均衡
+  - DIRECT
+- name: 🇹🇭 泰国 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇹🇭|泰国|泰國|曼谷|Thailand|Bangkok|(^|[^A-Za-z])TH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇹🇭 泰国 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇹🇭|泰国|泰國|曼谷|Thailand|Bangkok|(^|[^A-Za-z])TH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇭 泰国 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇹🇭|泰国|泰國|曼谷|Thailand|Bangkok|(^|[^A-Za-z])TH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇭 泰国 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇹🇭|泰国|泰國|曼谷|Thailand|Bangkok|(^|[^A-Za-z])TH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇲🇾 马来西亚
+  type: select
+  proxies:
+  - 🇲🇾 马来西亚 自动测速
+  - 🇲🇾 马来西亚 手动选择
+  - 🇲🇾 马来西亚 故障转移
+  - 🇲🇾 马来西亚 负载均衡
+  - DIRECT
+- name: 🇲🇾 马来西亚 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇲🇾|马来西亚|馬來西亞|吉隆坡|Malaysia|Kuala[ -]?Lumpur|(^|[^A-Za-z])MY([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇲🇾 马来西亚 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇲🇾|马来西亚|馬來西亞|吉隆坡|Malaysia|Kuala[ -]?Lumpur|(^|[^A-Za-z])MY([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇲🇾 马来西亚 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇲🇾|马来西亚|馬來西亞|吉隆坡|Malaysia|Kuala[ -]?Lumpur|(^|[^A-Za-z])MY([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇲🇾 马来西亚 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇲🇾|马来西亚|馬來西亞|吉隆坡|Malaysia|Kuala[ -]?Lumpur|(^|[^A-Za-z])MY([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇵🇭 菲律宾
+  type: select
+  proxies:
+  - 🇵🇭 菲律宾 自动测速
+  - 🇵🇭 菲律宾 手动选择
+  - 🇵🇭 菲律宾 故障转移
+  - 🇵🇭 菲律宾 负载均衡
+  - DIRECT
+- name: 🇵🇭 菲律宾 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇵🇭|菲律宾|菲律賓|马尼拉|馬尼拉|Philippines|Manila|(^|[^A-Za-z])PH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇵🇭 菲律宾 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇵🇭|菲律宾|菲律賓|马尼拉|馬尼拉|Philippines|Manila|(^|[^A-Za-z])PH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇵🇭 菲律宾 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇵🇭|菲律宾|菲律賓|马尼拉|馬尼拉|Philippines|Manila|(^|[^A-Za-z])PH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇵🇭 菲律宾 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇵🇭|菲律宾|菲律賓|马尼拉|馬尼拉|Philippines|Manila|(^|[^A-Za-z])PH([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇻🇳 越南
+  type: select
+  proxies:
+  - 🇻🇳 越南 自动测速
+  - 🇻🇳 越南 手动选择
+  - 🇻🇳 越南 故障转移
+  - 🇻🇳 越南 负载均衡
+  - DIRECT
+- name: 🇻🇳 越南 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇻🇳|越南|Vietnam|Hanoi|河内|胡志明|(^|[^A-Za-z])VN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇻🇳 越南 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇻🇳|越南|Vietnam|Hanoi|河内|胡志明|(^|[^A-Za-z])VN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇻🇳 越南 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇻🇳|越南|Vietnam|Hanoi|河内|胡志明|(^|[^A-Za-z])VN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇻🇳 越南 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇻🇳|越南|Vietnam|Hanoi|河内|胡志明|(^|[^A-Za-z])VN([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇮🇩 印尼
+  type: select
+  proxies:
+  - 🇮🇩 印尼 自动测速
+  - 🇮🇩 印尼 手动选择
+  - 🇮🇩 印尼 故障转移
+  - 🇮🇩 印尼 负载均衡
+  - DIRECT
+- name: 🇮🇩 印尼 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇮🇩|印尼|印度尼西亚|印度尼西亞|Indonesia|Jakarta|雅加达|雅加達|(^|[^A-Za-z])ID([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇮🇩 印尼 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇮🇩|印尼|印度尼西亚|印度尼西亞|Indonesia|Jakarta|雅加达|雅加達|(^|[^A-Za-z])ID([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇩 印尼 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇮🇩|印尼|印度尼西亚|印度尼西亞|Indonesia|Jakarta|雅加达|雅加達|(^|[^A-Za-z])ID([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇮🇩 印尼 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇮🇩|印尼|印度尼西亚|印度尼西亞|Indonesia|Jakarta|雅加达|雅加達|(^|[^A-Za-z])ID([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇹🇷 土耳其
+  type: select
+  proxies:
+  - 🇹🇷 土耳其 自动测速
+  - 🇹🇷 土耳其 手动选择
+  - 🇹🇷 土耳其 故障转移
+  - 🇹🇷 土耳其 负载均衡
+  - DIRECT
+- name: 🇹🇷 土耳其 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇹🇷|土耳其|Turkey|Istanbul|伊斯坦布尔|伊斯坦堡|(^|[^A-Za-z])TR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇹🇷 土耳其 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇹🇷|土耳其|Turkey|Istanbul|伊斯坦布尔|伊斯坦堡|(^|[^A-Za-z])TR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇷 土耳其 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇹🇷|土耳其|Turkey|Istanbul|伊斯坦布尔|伊斯坦堡|(^|[^A-Za-z])TR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇹🇷 土耳其 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇹🇷|土耳其|Turkey|Istanbul|伊斯坦布尔|伊斯坦堡|(^|[^A-Za-z])TR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇷🇺 俄罗斯
+  type: select
+  proxies:
+  - 🇷🇺 俄罗斯 自动测速
+  - 🇷🇺 俄罗斯 手动选择
+  - 🇷🇺 俄罗斯 故障转移
+  - 🇷🇺 俄罗斯 负载均衡
+  - DIRECT
+- name: 🇷🇺 俄罗斯 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇷🇺|俄罗斯|俄羅斯|俄国|俄國|Russia|Moscow|莫斯科|(^|[^A-Za-z])RU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇷🇺 俄罗斯 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇷🇺|俄罗斯|俄羅斯|俄国|俄國|Russia|Moscow|莫斯科|(^|[^A-Za-z])RU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇷🇺 俄罗斯 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇷🇺|俄罗斯|俄羅斯|俄国|俄國|Russia|Moscow|莫斯科|(^|[^A-Za-z])RU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇷🇺 俄罗斯 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇷🇺|俄罗斯|俄羅斯|俄国|俄國|Russia|Moscow|莫斯科|(^|[^A-Za-z])RU([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇧🇷 巴西
+  type: select
+  proxies:
+  - 🇧🇷 巴西 自动测速
+  - 🇧🇷 巴西 手动选择
+  - 🇧🇷 巴西 故障转移
+  - 🇧🇷 巴西 负载均衡
+  - DIRECT
+- name: 🇧🇷 巴西 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇧🇷|巴西|Brazil|Sao[ -]?Paulo|São[ -]?Paulo|圣保罗|聖保羅|(^|[^A-Za-z])BR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇧🇷 巴西 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇧🇷|巴西|Brazil|Sao[ -]?Paulo|São[ -]?Paulo|圣保罗|聖保羅|(^|[^A-Za-z])BR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇧🇷 巴西 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇧🇷|巴西|Brazil|Sao[ -]?Paulo|São[ -]?Paulo|圣保罗|聖保羅|(^|[^A-Za-z])BR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇧🇷 巴西 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇧🇷|巴西|Brazil|Sao[ -]?Paulo|São[ -]?Paulo|圣保罗|聖保羅|(^|[^A-Za-z])BR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇲🇽 墨西哥
+  type: select
+  proxies:
+  - 🇲🇽 墨西哥 自动测速
+  - 🇲🇽 墨西哥 手动选择
+  - 🇲🇽 墨西哥 故障转移
+  - 🇲🇽 墨西哥 负载均衡
+  - DIRECT
+- name: 🇲🇽 墨西哥 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇲🇽|墨西哥|Mexico|Mexico[ -]?City|墨西哥城|(^|[^A-Za-z])MX([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇲🇽 墨西哥 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇲🇽|墨西哥|Mexico|Mexico[ -]?City|墨西哥城|(^|[^A-Za-z])MX([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇲🇽 墨西哥 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇲🇽|墨西哥|Mexico|Mexico[ -]?City|墨西哥城|(^|[^A-Za-z])MX([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇲🇽 墨西哥 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇲🇽|墨西哥|Mexico|Mexico[ -]?City|墨西哥城|(^|[^A-Za-z])MX([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇦🇷 阿根廷
+  type: select
+  proxies:
+  - 🇦🇷 阿根廷 自动测速
+  - 🇦🇷 阿根廷 手动选择
+  - 🇦🇷 阿根廷 故障转移
+  - 🇦🇷 阿根廷 负载均衡
+  - DIRECT
+- name: 🇦🇷 阿根廷 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇦🇷|阿根廷|Argentina|Buenos[ -]?Aires|布宜诺斯艾利斯|布宜諾斯艾利斯|(^|[^A-Za-z])AR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇦🇷 阿根廷 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇦🇷|阿根廷|Argentina|Buenos[ -]?Aires|布宜诺斯艾利斯|布宜諾斯艾利斯|(^|[^A-Za-z])AR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇷 阿根廷 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇦🇷|阿根廷|Argentina|Buenos[ -]?Aires|布宜诺斯艾利斯|布宜諾斯艾利斯|(^|[^A-Za-z])AR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇷 阿根廷 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇦🇷|阿根廷|Argentina|Buenos[ -]?Aires|布宜诺斯艾利斯|布宜諾斯艾利斯|(^|[^A-Za-z])AR([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇿🇦 南非
+  type: select
+  proxies:
+  - 🇿🇦 南非 自动测速
+  - 🇿🇦 南非 手动选择
+  - 🇿🇦 南非 故障转移
+  - 🇿🇦 南非 负载均衡
+  - DIRECT
+- name: 🇿🇦 南非 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇿🇦|南非|South[ -]?Africa|Johannesburg|约翰内斯堡|約翰尼斯堡|(^|[^A-Za-z])ZA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇿🇦 南非 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇿🇦|南非|South[ -]?Africa|Johannesburg|约翰内斯堡|約翰尼斯堡|(^|[^A-Za-z])ZA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇿🇦 南非 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇿🇦|南非|South[ -]?Africa|Johannesburg|约翰内斯堡|約翰尼斯堡|(^|[^A-Za-z])ZA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇿🇦 南非 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇿🇦|南非|South[ -]?Africa|Johannesburg|约翰内斯堡|約翰尼斯堡|(^|[^A-Za-z])ZA([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+- name: 🇦🇪 阿联酋
+  type: select
+  proxies:
+  - 🇦🇪 阿联酋 自动测速
+  - 🇦🇪 阿联酋 手动选择
+  - 🇦🇪 阿联酋 故障转移
+  - 🇦🇪 阿联酋 负载均衡
+  - DIRECT
+- name: 🇦🇪 阿联酋 手动选择
+  type: select
+  include-all: true
+  filter: (?i)(🇦🇪|阿联酋|阿聯酋|迪拜|Dubai|UAE|United[ -]?Arab[ -]?Emirates|(^|[^A-Za-z])AE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+- name: 🇦🇪 阿联酋 自动测速
+  type: url-test
+  include-all: true
+  filter: (?i)(🇦🇪|阿联酋|阿聯酋|迪拜|Dubai|UAE|United[ -]?Arab[ -]?Emirates|(^|[^A-Za-z])AE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇪 阿联酋 故障转移
+  type: fallback
+  include-all: true
+  filter: (?i)(🇦🇪|阿联酋|阿聯酋|迪拜|Dubai|UAE|United[ -]?Arab[ -]?Emirates|(^|[^A-Za-z])AE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+- name: 🇦🇪 阿联酋 负载均衡
+  type: load-balance
+  include-all: true
+  filter: (?i)(🇦🇪|阿联酋|阿聯酋|迪拜|Dubai|UAE|United[ -]?Arab[ -]?Emirates|(^|[^A-Za-z])AE([^A-Za-z]|$))
+  exclude-filter: (?i)(剩余|流量|套餐|官网|客服|订阅|订閱|过期|過期|到期|Expire|Traffic|Subscription|官网|网站|网址|建议|提示)
+  url: http://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  strategy: consistent-hashing
+rule-providers:
+  Local-IP:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://cdn.jsdmirror.com/gh/HosheaPDNX/rule-set@V2.0.0/mihomo/Local/Local-IP.mrs
+    path: ./ruleset/Local-IP.mrs
+    proxy: DIRECT
+    interval: 86400
+  China-Site:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://cdn.jsdmirror.com/gh/HosheaPDNX/rule-set@V2.0.0/mihomo/China/China-Site.mrs
+    path: ./ruleset/China-Site.mrs
+    proxy: DIRECT
+    interval: 86400
+  China-IP:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://cdn.jsdmirror.com/gh/HosheaPDNX/rule-set@V2.0.0/mihomo/China/China-IP.mrs
+    path: ./ruleset/China-IP.mrs
+    proxy: DIRECT
+    interval: 86400
+rules:
+- DOMAIN,localhost,DIRECT
+- DOMAIN-SUFFIX,localhost,DIRECT
+- DOMAIN-SUFFIX,localdomain,DIRECT
+- DOMAIN-SUFFIX,local,DIRECT
+- DOMAIN-SUFFIX,lan,DIRECT
+- DOMAIN-SUFFIX,home.arpa,DIRECT
+- DOMAIN-SUFFIX,in-addr.arpa,DIRECT
+- DOMAIN-SUFFIX,ip6.arpa,DIRECT
+- DOMAIN-SUFFIX,arpa,DIRECT
+- IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+- IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+- IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+- IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+- IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+- IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+- IP-CIDR6,::1/128,DIRECT,no-resolve
+- IP-CIDR6,fe80::/10,DIRECT,no-resolve
+- IP-CIDR6,fc00::/7,DIRECT,no-resolve
+- IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+- IP-CIDR,255.255.255.255/32,DIRECT,no-resolve
+- IP-CIDR6,ff00::/8,DIRECT,no-resolve
+- DST-PORT,5350,DIRECT
+- DST-PORT,5351,DIRECT
+- DST-PORT,5353,DIRECT
+- IP-CIDR,223.5.5.5/32,DIRECT,no-resolve
+- DST-PORT,123,DIRECT
+- RULE-SET,Local-IP,DIRECT,no-resolve
+- RULE-SET,China-Site,DIRECT
+- RULE-SET,China-IP,DIRECT,no-resolve
+- GEOIP,CN,DIRECT,no-resolve
+- MATCH,国外代理
