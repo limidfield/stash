@@ -1,6 +1,1 @@
-name: Stash Pure Override No Tencent DNS
-desc: Minimal test override
-
-rules:
-  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
-  - IP-CIDR,255.255.255.255/32,DIRECT,no-resolve
+name: Stash Pure Override No Tencent DNS desc: "" category: ruleset icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png rules: - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve - IP-CIDR,255.255.255.255/32,DIRECT,no-resolve
