@@ -1,0 +1,13 @@
+name: Stash General Settings Optional
+desc: 可选：只设置 rule 模式、日志、IPv6、并发连接与 profile 记忆选项；不包含端口监听
+category: settings
+icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png
+
+mode: rule
+log-level: info
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+profile:
+  store-selected: true
+  store-fake-ip: true

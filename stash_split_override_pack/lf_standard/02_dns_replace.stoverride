@@ -1,0 +1,57 @@
+name: Stash DNS Replace
+desc: 仅替换 DNS 设置：fake-ip、系统/国内 DNS、国外 DoH 与规则跟随
+category: dns
+icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.png
+
+dns: #!replace
+  enable: true
+  listen: 0.0.0.0:53
+  ipv6: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+  - localhost
+  - '*.localhost'
+  - '*.localdomain'
+  - '*.lan'
+  - '*.local'
+  - '*.home.arpa'
+  - '*.in-addr.arpa'
+  - '*.ip6.arpa'
+  - '*.arpa'
+  default-nameserver:
+  - 223.5.5.5
+  nameserver:
+  - system
+  - 223.5.5.5
+  nameserver-policy:
+    geosite:private:
+    - system
+    +.localhost:
+    - system
+    +.localdomain:
+    - system
+    +.lan:
+    - system
+    +.local:
+    - system
+    +.home.arpa:
+    - system
+    +.in-addr.arpa:
+    - system
+    +.ip6.arpa:
+    - system
+    +.arpa:
+    - system
+    geosite:cn:
+    - system
+    - 223.5.5.5
+    rule-set:China-Site:
+    - system
+    - 223.5.5.5
+    geosite:geolocation-!cn:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+  proxy-server-nameserver:
+  - 223.5.5.5
+  follow-rule: true

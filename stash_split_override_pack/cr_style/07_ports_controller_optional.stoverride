@@ -1,0 +1,1 @@
+name: Stash Ports Controller Optionaldesc: 可选且谨慎：设置 mixed-port、allow-lan、bind-address 和 external-controller；若 iOS 导入失败请不要使用category: settingsicon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Direct.pngmixed-port: 7890allow-lan: truebind-address: '*'external-controller: 127.0.0.1:9090
